@@ -859,9 +859,9 @@ func (s *Server) startGears(ctx context.Context, cancel context.CancelFunc) {
 		server.Handler = &ochttp.Handler{
 			Handler: s.Router,
 			GetStartOptions: func(r *http.Request) trace.StartOptions {
-				startOptions := trace.StartOptions{}
+				startOptions := trace.StartOptions{Sampler: trace.NeverSample()}
 				// TODO: Add list of url paths to exclude
-				if r.URL.Path != "/version" {
+				if r.URL.Path != "/" {
 					startOptions.Sampler = trace.AlwaysSample()
 				}
 				// Defaults to global sampler
@@ -893,15 +893,6 @@ func (s *Server) startGears(ctx context.Context, cancel context.CancelFunc) {
 		if adminServer.Handler == nil {
 			adminServer.Handler = &ochttp.Handler{
 				Handler: s.AdminRouter,
-				GetStartOptions: func(r *http.Request) trace.StartOptions {
-					startOptions := trace.StartOptions{}
-					// TODO: Add list of url paths to exclude
-					if r.URL.Path != "/version" {
-						startOptions.Sampler = trace.AlwaysSample()
-					}
-					// Defaults to global sampler
-					return startOptions
-				},
 			}
 		}
 
